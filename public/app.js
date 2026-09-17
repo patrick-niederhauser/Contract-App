@@ -117,6 +117,19 @@ function restorationSection(){const r=state().restoration,isManager=manager(),ob
  detail.querySelectorAll('[data-restore-object]').forEach(el=>el.onchange=()=>{r.objects[el.dataset.restoreObject]=el.value==='yes';restorationChanged([el.dataset.restoreObject]);});
 }
 
+
+const numberingText=new WeakMap();
+function numberArticlePresentation(container){
+ const plan=window.contractArticleNumbering.build(state());
+ const doc=container.ownerDocument,walker=doc.createTreeWalker(container,4);let node;
+ while(node=walker.nextNode()){
+  const el=node.parentElement;
+  if(!el||el.closest('textarea,input,script,style,.lc-copy,.lc-proposal,.lc-preview-copy,[data-preview-section^="clause-library-"]')||el.closest('#lc-detail')&&active.startsWith('library-'))continue;
+  const previous=numberingText.get(node),source=previous&&node.nodeValue===previous.rendered?previous.source:node.nodeValue;const rendered=window.contractArticleNumbering.format(source,plan);numberingText.set(node,{source,rendered});node.nodeValue=rendered;
+ }
+ container.querySelectorAll('[data-open]').forEach(el=>{const key=el.dataset.open;el.dataset.articleKey=key;if(plan.numbers[key])el.dataset.articleNumber=plan.numbers[key];else delete el.dataset.articleNumber;});
+}
+
 function contractPreview(target=detail){const detail=target,s=state(),c=p();let pending=0;
  function section(title,current,proposed=null,type='',key='',fixed=''){
   if(proposed!==null)pending++;
@@ -126,14 +139,14 @@ function contractPreview(target=detail){const detail=target,s=state(),c=p();let 
  const clauseBlock=key=>{const d=s.clauses[key];const block=section(d.title,clauseText(d,d.kind==='number'?d.value:d.text),d.proposal!=null?clauseText(d,d.proposal):null,'clause',key,d.fixed||'');return d.sourceUrl?block.replace('</section>','<p>'+link(d.sourceUrl,'Original-PDF öffnen · '+esc(d.filename))+'</p></section>'):block;};
  let html=section('Vertragsparteien und Mietobjekte','Eigentümerin ↔ '+(state().requestMeta?.company||'Studio Beispiel GmbH')+'\nGewerbemietvertrag '+(state().requestMeta?.id||country+'-2026-042')+'\nBüro und Lager im Werkhof · 240 m² vereinbarte Mietfläche');
  for(const key of Object.keys(s.clauses).filter(k=>k.startsWith('library-')))html+=clauseBlock(key);
- for(const o of s.objects)html+=section('Art. 1 · '+o.name,'Flächenbasis: '+c.standard+'\n'+c.areaType+': '+fmt(o.net)+' m²\nVertraglicher Gemeinschaftsanteil: '+fmt(o.shared)+' m²\nMietpreis-Bezugsfläche: '+fmt(o.area)+' m²\n'+c.supplement+(objectDocs(o.id).length?'\nDokumente: '+objectDocs(o.id).map(d=>d.name+' · Version '+d.version).join('; '):''));
- for(const id of ['office','storage'])html+=clauseBlock('fit-'+id)+section('Rückbauzuordnung · '+s.objects.find(o=>o.id===id).name,restorationApplies(id)?'Rückbaupflicht gemäss Art. 7 für dieses Objekt.':'Keine Rückbauverpflichtung für dieses Objekt.');
- for(const o of s.objects){const text=rate=>c.rent+': '+cash(rate)+'/m²/'+c.period+'\nNetto pro Monat: '+cash(o.area*rate/c.divisor)+'\n'+c.nk+': '+cash(o.nk)+'/Monat';html+=section('Art. 3 · '+o.name,text(o.rate),o.proposal!=null?text(o.proposal):null,'price',o.id);}
+ for(const [i,o] of s.objects.entries())html+=section('Art. 1.'+(i+1)+' · '+o.name,'Flächenbasis: '+c.standard+'\n'+c.areaType+': '+fmt(o.net)+' m²\nVertraglicher Gemeinschaftsanteil: '+fmt(o.shared)+' m²\nMietpreis-Bezugsfläche: '+fmt(o.area)+' m²\n'+c.supplement+(objectDocs(o.id).length?'\nDokumente: '+objectDocs(o.id).map(d=>d.name+' · Version '+d.version).join('; '):''));
+ for(const id of ['office','storage'])html+=clauseBlock('fit-'+id)+section('Rückbauzuordnung · '+s.objects.find(o=>o.id===id).name,restorationApplies(id)?'Rückbaupflicht gemäss Art. '+window.contractArticleNumbering.build(s).numbers.restoration+' für dieses Objekt.':'Keine Rückbauverpflichtung für dieses Objekt.');
+ for(const [i,o] of s.objects.entries()){const text=rate=>c.rent+': '+cash(rate)+'/m²/'+c.period+'\nNetto pro Monat: '+cash(o.area*rate/c.divisor)+'\n'+c.nk+': '+cash(o.nk)+'/Monat';html+=section('Art. 3.'+(i+1)+' · '+o.name,text(o.rate),o.proposal!=null?text(o.proposal):null,'price',o.id);}
  html+=section(c.rent+' gesamt',cash(s.objects.reduce((sum,o)=>sum+monthly(o),0))+'/Monat\n'+c.nk+' gesamt: '+cash(s.objects.reduce((sum,o)=>sum+o.nk,0))+'/Monat\nSteuerbehandlung ('+c.tax+'): im Vertrag festzulegen.');
  html+=clauseBlock('index');
- for(const key of ['term','extension','break']){if(key==='extension'&&s.options.term.value.type!=='fixed')continue;const d=s.options[key];html+=section(optionTitles[key],optionDescription(key,d.value),d.proposal?optionDescription(key,d.proposal):null,'option',key);}
+ for(const key of ['term','extension','break']){if(key!=='term'&&!window.contractArticleNumbering.build(s).numbers[key])continue;const d=s.options[key];html+=section(optionTitles[key],optionDescription(key,d.value),d.proposal?optionDescription(key,d.proposal):null,'option',key);}
  html+=clauseBlock('deposit');
- if(!s.restoration.enabled)html+=section('Art. 7 · Rückbau','Keine Rückbauverpflichtung vereinbart.');else if(!restorationValid())html+=section('Art. 7 · Rückbau','Noch unvollständig: mindestens ein Mietobjekt auswählen oder die Rückbauverpflichtung ausschalten.');else for(const o of restorationObjects())html+=clauseBlock('restore-'+o.id);
+ if(!s.restoration.enabled){}else if(!restorationValid())html+=section('Art. 7 · Rückbau','Noch unvollständig: mindestens ein Mietobjekt auswählen oder die Rückbauverpflichtung ausschalten.');else for(const o of restorationObjects())html+=clauseBlock('restore-'+o.id);
  html+='<h2>'+c.annex+'</h2>'+(Object.values(s.clauses).some(d=>d.category==='conditions')?'':section('01 · Allgemeine Bestimmungen · '+country+' · Version 1.0','Gemeinsam genutzte Flächen sind freizuhalten.\n(Demovorlage mit verkürztem Beispielinhalt.)'))+clauseBlock('annex');
  html+='<h3>03 · Ausbau- und Schnittstellenmatrix</h3>';
  for(const r of s.matrix){const text=v=>matrixFields.map(([key,label])=>label+': '+v[key]).join('\n');html+=section(r.name+' · '+r.object,text(r.value),r.proposal?text(r.proposal):null,'matrix',r.id);}
@@ -143,6 +156,7 @@ function contractPreview(target=detail){const detail=target,s=state(),c=p();let 
   html+='</section>';
  }
  detail.innerHTML='<div class="lc-row"><h2>Gesamter Vertragsentwurf</h2><span class="lc-tag">'+pending+' offene Änderungsvorschläge</span></div><div class="lc-note">Gesamtansicht des in dieser Demo aufgebauten Vertragssets. Farbige Bereiche zeigen offene Vorschläge; ungesendete Eingaben sind nicht Teil des Entwurfs. Die verkürzte Demovorlage ersetzt keine importierte Originalvorlage.</div><div id="lc-preview-error" role="alert"></div>'+html;
+ numberArticlePresentation(detail);
  detail.querySelectorAll('[data-preview-accept]').forEach(b=>b.onclick=()=>{if(!manager()||s!==state())return;const key=b.dataset.previewKey,type=b.dataset.previewAccept;let error='';
   if(type==='option'){const d=s.options[key];if(!d.proposal)return;error=validateOption(key,d.proposal);if(!error)applyOption(key,d.proposal);}
   else if(type==='matrix'){const r=s.matrix.find(row=>row.id===key);if(!r?.proposal)return;error=matrixError(r,r.proposal,true);if(!error){r.value={...r.proposal};r.proposal=null;r.draft=null;r.log=c.organisation+' · In Gesamtvorschau übernommen';}}
@@ -161,7 +175,7 @@ function refreshPreview(){
 }
 function openPreviewWindow(){
  if(previewWindow&&!previewWindow.closed&&previewState===state()){refreshPreview();previewWindow.focus();return;}
- previewWindow=window.open(new URL('./preview.html?v=9',location.href).href,'contract-app-preview','popup=yes,width=1120,height=850,resizable=yes,scrollbars=yes');
+ previewWindow=window.open(new URL('./preview.html?v=10',location.href).href,'contract-app-preview','popup=yes,width=1120,height=850,resizable=yes,scrollbars=yes');
  if(!previewWindow){let msg=root.querySelector('#lc-window-message');if(!msg){msg=document.createElement('p');msg.id='lc-window-message';msg.setAttribute('role','alert');root.querySelector('#lc-options-summary').append(msg);}msg.textContent='Das Vorschaufenster wurde blockiert. Bitte Pop-ups für diese Website erlauben und die Gesamtvorschau erneut öffnen.';return;}
  previewState=state();const popup=previewWindow;
  const initialize=()=>{if(popup.closed||popup!==previewWindow)return;const close=popup.document.getElementById('preview-close');if(!close)return;close.onclick=()=>popup.close();popup.document.getElementById('preview-print').onclick=()=>popup.print();refreshPreview();};
@@ -228,7 +242,7 @@ function documentsSection(){if(!manager()){active='annex-list';annexes();return;
 function annexes(){const c=p();detail.innerHTML='<h3>'+c.annex+' · Vertragsset '+country+'</h3>'+(Object.values(state().clauses).some(d=>d.category==='conditions')?'':'<details><summary>01 · Allgemeine Bestimmungen '+country+' · Version 1.0</summary><p><span class="lc-tag">Fest vorgegeben</span></p><p>Beispielauszug: Gemeinsam genutzte Flächen sind freizuhalten.</p></details>')+'<details><summary>02 · Ausbauvereinbarung '+country+' · Version 1.0</summary><p>Leistungsumfang und Termine · Ziff. 2 verhandelbar</p>'+button('annex','Ziff. 2 verhandeln')+'</details><div class="lc-section">03 · Ausbau- und Schnittstellenmatrix '+country+'<p>'+button('matrix','Matrix ausfüllen und prüfen')+'</p></div>'+state().documents.map((d,i)=>'<div class="lc-section"><strong>'+String(i+4).padStart(2,'0')+' · '+esc(docKind(d.kind)+' · '+d.name)+'</strong><div class="lc-note">'+esc(state().objects.find(o=>o.id===d.object).name)+' · '+esc(d.source)+' · Version '+esc(d.version)+'</div>'+(d.url?'<a href="'+d.url+'" download="'+esc(d.name)+'">Datei öffnen / herunterladen</a>':'<div class="lc-note">ERP-Demo · Beispieldatensatz ohne Originaldatei</div>')+'</div>').join('')+Object.entries(state().clauses).filter(([k])=>k.startsWith('library-')).map(([k,d])=>'<div class="lc-section">'+button(k,esc(d.title))+'<div class="lc-note">'+esc(d.fixed)+'</div></div>').join('')+(manager()?'<p>'+button('documents','Flächenaufstellungen und Pläne verwalten')+'</p>':'');}
 
 function setup(){if(!manager())return;detail.innerHTML='<h3>Vorlagenverwaltung</h3><p>Vorlagen und Beilagen werden zentral eingelesen und bei der Erstellung eines neuen Entwurfs ausgewählt.</p><button id="lc-open-library" class="lc-primary">Vorlagen & Beilagen verwalten</button><p class="lc-note">Der aktuelle Entwurf behält seine bei der Erstellung übernommenen Fassungen.</p>';detail.querySelector('#lc-open-library').onclick=()=>window.templateLibrary.open();}
-function render(){if(active.startsWith('restore-')&&!restorationApplies(active.slice(8)))active='restoration';shell();optionsOverview();if(active==='preview')contractPreview();else if(['term','extension','break'].includes(active))optionSection();else if(active==='restoration')restorationSection();else if(active==='rent')rates();else if(active.startsWith('area-'))areas();else if(active==='matrix'||active.startsWith('matrix-'))matrixSection();else if(active==='annex-list')annexes();else if(active==='documents')documentsSection();else if(active==='setup')setup();else clause();confirmationsUI();root.querySelectorAll('[data-open]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.open===active));b.onclick=()=>{if(b.dataset.open==='preview'){openPreviewWindow();return;}active=b.dataset.open;render();};});refreshPreview();}
+function render(){if(active.startsWith('restore-')&&!restorationApplies(active.slice(8)))active='restoration';shell();optionsOverview();if(active==='preview')contractPreview();else if(['term','extension','break'].includes(active))optionSection();else if(active==='restoration')restorationSection();else if(active==='rent')rates();else if(active.startsWith('area-'))areas();else if(active==='matrix'||active.startsWith('matrix-'))matrixSection();else if(active==='annex-list')annexes();else if(active==='documents')documentsSection();else if(active==='setup')setup();else clause();confirmationsUI();numberArticlePresentation(root);root.querySelectorAll('[data-open]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.open===active));b.onclick=()=>{if(b.dataset.open==='preview'){openPreviewWindow();return;}active=b.dataset.open;render();};});refreshPreview();}
 countryInput.onchange=()=>{country=countryInput.value;render();};roleInput.onchange=()=>{if(active==='setup'&&!manager())active='rent';if(active==='documents'&&!manager())active='annex-list';render();};render();
 const pristine=structuredClone(states);
 window.contractDemo={
