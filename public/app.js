@@ -161,7 +161,7 @@ function refreshPreview(){
 }
 function openPreviewWindow(){
  if(previewWindow&&!previewWindow.closed&&previewState===state()){refreshPreview();previewWindow.focus();return;}
- previewWindow=window.open(new URL('./preview.html',location.href).href,'contract-app-preview','popup=yes,width=1120,height=850,resizable=yes,scrollbars=yes');
+ previewWindow=window.open(new URL('./preview.html?v=7',location.href).href,'contract-app-preview','popup=yes,width=1120,height=850,resizable=yes,scrollbars=yes');
  if(!previewWindow){let msg=root.querySelector('#lc-window-message');if(!msg){msg=document.createElement('p');msg.id='lc-window-message';msg.setAttribute('role','alert');root.querySelector('#lc-options-summary').append(msg);}msg.textContent='Das Vorschaufenster wurde blockiert. Bitte Pop-ups für diese Website erlauben und die Gesamtvorschau erneut öffnen.';return;}
  previewState=state();const popup=previewWindow;
  const initialize=()=>{if(popup.closed||popup!==previewWindow)return;const close=popup.document.getElementById('preview-close');if(!close)return;close.onclick=()=>popup.close();popup.document.getElementById('preview-print').onclick=()=>popup.print();refreshPreview();};
