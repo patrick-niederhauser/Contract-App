@@ -157,7 +157,7 @@ function refreshPreview(){
  if(!previewWindow||previewWindow.closed)return;
  if(previewState!==state()){previewWindow.close();previewWindow=null;return;}
  const target=previewWindow.document.getElementById('preview-content');
- if(target){const y=previewWindow.scrollY;contractPreview(target);previewWindow.document.getElementById('preview-context').textContent=(state().requestMeta?.company||'Vertragsentwurf')+' · '+country+' · '+(manager()?p().manager:'Mietinteressent');previewWindow.scrollTo(0,y);}
+ if(target){const y=previewWindow.scrollY;contractPreview(target);const s=state(),c=p();previewWindow.layoutContract?.({id:s.requestMeta?.id||country+'-2026-042',country,currency:c.currency,period:c.period,company:s.requestMeta?.company||'Studio Beispiel GmbH',contact:s.requestMeta?.contact||'',objects:s.objects.map(o=>({name:o.name,area:fmt(o.area),rate:fmt(o.rate),monthly:fmt(monthly(o))})),total:fmt(s.objects.reduce((sum,o)=>sum+monthly(o),0)),nk:cash(s.objects.reduce((sum,o)=>sum+o.nk,0)),term:optionDescription('term',s.options.term.value).replace(/\n/g,' · '),index:fmt(s.clauses.index.value)+' % '+c.index,deposit:cash(s.clauses.deposit.value)});previewWindow.document.getElementById('preview-context').textContent=(state().requestMeta?.company||'Vertragsentwurf')+' · '+country+' · '+(manager()?p().manager:'Mietinteressent');previewWindow.scrollTo(0,y);}
 }
 function openPreviewWindow(){
  if(previewWindow&&!previewWindow.closed&&previewState===state()){refreshPreview();previewWindow.focus();return;}
@@ -246,3 +246,4 @@ window.contractDemo={
  showPreview(){detail.innerHTML='<h3>Gesamtvorschau des Vertrags</h3><p>Vertrag und Beilagen in einem separaten Fenster prüfen. Änderungen können dort durch die Bewirtschaftung übernommen werden.</p><button id="lc-window-open" class="lc-primary">Gesamtvorschau in neuem Fenster öffnen ↗</button>';detail.querySelector('#lc-window-open').onclick=openPreviewWindow;}
 };
 })();
+

@@ -1,0 +1,30 @@
+body{margin:0;background:#e8ebef;padding:0;color:#20242b}
+#lease-country{max-width:none;margin:0;padding:0;background:transparent;font-family:Arial,Helvetica,sans-serif}
+#preview-toolbar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #d3d9e2;padding:14px max(24px,calc((100% - 794px)/2));box-shadow:0 2px 10px #1624390b}
+#preview-toolbar strong{font-size:15px}#preview-toolbar .lc-note{margin-top:5px;font-size:12px}.preview-legend{font-size:11px;color:#647084;margin:6px 0 0}
+#preview-content{padding:28px 16px 50px;overflow-x:auto}
+#lease-country .contract-sheet{box-sizing:border-box;width:210mm;min-height:297mm;margin:0 auto 24px;padding:15mm 18mm 13mm;background:#fff;box-shadow:0 3px 16px #14233718;display:flex;flex-direction:column;color:#20242b;font-size:10pt;line-height:1.45}
+.sheet-head{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #202b3a;padding-bottom:9px;margin-bottom:22px;font-size:8pt;color:#546171;letter-spacing:.04em}.sheet-head strong{color:#273449}
+.sheet-body{flex:1}.sheet-foot{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #9aa5b2;padding-top:9px;margin-top:20px;font-size:8pt;color:#606b79}
+#lease-country .contract-sheet h1{font-size:21pt;line-height:1.2;color:#1b2c45;margin:12px 0 8px;letter-spacing:.02em;font-weight:700}
+#lease-country .contract-sheet h2{font-size:13pt;color:#294b98;border-bottom:1px solid #8094bd;padding-bottom:7px;margin:14px 0 10px}
+#lease-country .contract-sheet h3{font-size:10.5pt;color:#202b3a;line-height:1.4;margin:0 0 8px;font-weight:700}
+#lease-country .contract-sheet .lc-contract-section{border:0;border-radius:0;background:transparent;padding:12px 0;margin:0;border-bottom:1px solid #e4e7eb;box-shadow:none;break-inside:avoid}
+#lease-country .contract-sheet .lc-preview-copy{white-space:pre-wrap;font-size:10pt;line-height:1.5;overflow-wrap:anywhere}
+#lease-country .contract-sheet .lc-fixed{background:#f2f3f5;border:0;border-radius:0;padding:10px 12px;white-space:pre-wrap;color:#404957;font-size:9pt;margin:0 0 10px;overflow-wrap:anywhere}
+#lease-country .contract-sheet .lc-note{font-size:8.5pt;line-height:1.5}
+#lease-country .contract-sheet .lc-preview-change{background:#fff8df;border:1px solid #e6c671;border-left:3px solid #cf9e20;border-radius:0;padding:12px;margin:8px 0}
+#lease-country .contract-sheet .lc-preview-comparison{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}.lc-preview-comparison strong{font-size:8pt;text-transform:uppercase;letter-spacing:.03em}
+#lease-country .contract-sheet .lc-preview-new{background:#fff2bd;padding:8px;border:0}.contract-sheet .lc-tag{font-size:8pt!important;border-radius:0!important;background:#f8e7ad!important;color:#644a0d!important}
+#lease-country .contract-sheet button{font-size:9pt;padding:8px 12px;border-radius:3px;margin-top:6px}
+.contract-kicker{font-size:8pt;text-transform:uppercase;letter-spacing:.13em;color:#647084}.contract-subtitle{font-size:10pt;margin:0 0 24px;color:#596778}
+.party-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.party-grid label{display:block;font-size:8pt;color:#667181;margin:12px 0 4px}.party-value{min-height:21px;border-bottom:1px solid #b7bec8;padding:4px 0;font-size:10pt}.party-empty{color:#87909b;font-style:italic;font-size:9pt}
+.contract-table{border-collapse:collapse;width:100%;font-size:9pt;margin:12px 0}.contract-table th{text-align:left;font-size:8pt;font-weight:600;background:#edf0f5;color:#44546e;padding:9px 7px}.contract-table td{border-bottom:1px solid #d6dce4;padding:10px 7px}.contract-table .num{text-align:right;white-space:nowrap}.contract-table tfoot{font-weight:bold;background:#f6f7f9}
+.contract-facts{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.contract-facts div{padding:12px 0;border-bottom:1px solid #d6dce4}.contract-facts small{display:block;font-size:8pt;color:#667181;margin-bottom:4px}.contract-facts strong{font-size:10pt;font-weight:600}
+.document-note{font-size:8.5pt;padding:12px;border-left:2px solid #899cbb;background:#f4f6f9;margin-top:22px;color:#58677d}
+#lease-country .contract-sheet .lc-document-frame{height:170mm;width:100%;border:1px solid #d6dce4}#lease-country .contract-sheet .lc-document-image{max-width:100%;max-height:180mm;object-fit:contain}
+@page{size:A4;margin:0}
+@media print{body{background:white}#preview-toolbar,.contract-sheet button{display:none!important}#preview-content{padding:0;overflow:visible}#lease-country .contract-sheet{margin:0;box-shadow:none;break-after:page;print-color-adjust:exact;-webkit-print-color-adjust:exact}#lease-country .contract-sheet:last-child{break-after:auto}a{color:inherit;text-decoration:none}.sheet-head,.sheet-foot{break-inside:avoid}}
+@media(max-width:640px){#preview-toolbar{padding:12px 16px}#preview-toolbar .lc-row{align-items:flex-start;gap:8px}#preview-toolbar button{font-size:11px;padding:7px}#preview-content{padding:16px 8px}.preview-legend{font-size:10px}}
+#lease-country .sheet-head{min-height:0;display:flex;flex-wrap:nowrap;justify-content:space-between;gap:16px;background:white;border:0;border-bottom:1px solid #202b3a;border-radius:0;padding:0 0 9px;margin:0 0 22px;font-size:8pt;color:#546171;letter-spacing:.04em}
+#lease-country .sheet-foot{display:flex;justify-content:space-between;gap:12px;border:0;border-top:1px solid #9aa5b2;background:white;padding:9px 0 0;margin:20px 0 0;font-size:8pt;color:#606b79}
