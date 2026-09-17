@@ -35,7 +35,7 @@ window.layoutContract = function(meta) {
     // Split long imported plain text into readable continuation sections without changing content.
     const copy=n.querySelector?.(':scope > .lc-preview-copy');
     if(copy && copy.textContent.length>2200 && !n.querySelector('[data-preview-accept]')){
-      const text=copy.textContent;const chunks=text.match(/[\s\S]{1,1500}(?:\s|$)|[\s\S]{1,1500}/g)||[text];
+      const text=copy.textContent,chunks=[];let rest=text;while(rest.length){let end=Math.min(1000,rest.length),lines=0;for(let i=0;i<end;i++){if(rest[i]==='\n'&&++lines===20){end=i+1;break;}}if(end<rest.length){const space=rest.lastIndexOf(' ',end);if(space>Math.max(0,end-120))end=space+1;}chunks.push(rest.slice(0,end));rest=rest.slice(end);}
       const title=n.querySelector('h3')?.textContent||'Vertragsbestimmung';
       copy.textContent=chunks.shift();place(n);
       for(const chunk of chunks){const continuation=document.createElement('section');continuation.className='lc-contract-section';continuation.innerHTML='<h3>'+esc(title)+' · Fortsetzung</h3><div class="lc-preview-copy">'+esc(chunk)+'</div>';place(continuation);}
