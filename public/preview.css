@@ -28,3 +28,12 @@ body{margin:0;background:#e8ebef;padding:0;color:#20242b}
 @media(max-width:640px){#preview-toolbar{padding:12px 16px}#preview-toolbar .lc-row{align-items:flex-start;gap:8px}#preview-toolbar button{font-size:11px;padding:7px}#preview-content{padding:16px 8px}.preview-legend{font-size:10px}}
 #lease-country .sheet-head{min-height:0;display:flex;flex-wrap:nowrap;justify-content:space-between;gap:16px;background:white;border:0;border-bottom:1px solid #202b3a;border-radius:0;padding:0 0 9px;margin:0 0 22px;font-size:8pt;color:#546171;letter-spacing:.04em}
 #lease-country .sheet-foot{display:flex;justify-content:space-between;gap:12px;border:0;border-top:1px solid #9aa5b2;background:white;padding:9px 0 0;margin:20px 0 0;font-size:8pt;color:#606b79}
+/* Compact main contract and detailed appendix, inspired by the commercial reference. */
+#lease-country .contract-sheet h1{font-size:16pt;letter-spacing:0;margin:18px 0 26px;color:#20242b}
+#lease-country .contract-sheet h2{font-size:11pt;color:#20242b;border:0;padding:0;margin:26px 0 12px}
+#lease-country .sheet-head{font-size:7.3pt;line-height:1.45;letter-spacing:0;align-items:flex-start;gap:16px}
+#lease-country .sheet-head>span{white-space:nowrap;font-size:7pt;color:#6c7480}
+.contract-party{margin:22px 0 26px;max-width:390px}.contract-party p{margin:0 0 12px}.contract-party label{display:block;color:#6d7480;font-size:8pt;margin-top:8px}.contract-party .party-value{font-size:10pt;padding:3px 0;min-height:18px}
+#lease-country .contract-table th{background:#ddd;color:#20242b}.contract-small{font-size:9pt;line-height:1.6;margin:16px 0}.contract-enclosures{padding-left:20px;font-size:10pt;line-height:1.8}
+.contract-signatures{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin:35px 0 24px;font-size:9pt}.contract-signatures i{display:block;border-bottom:1px solid #444;height:26px;margin:0 0 16px}
+#lease-country .sheet-foot{font-size:7pt;align-items:flex-start;gap:14px;min-height:28px;color:#303843}.visum-caption{font-size:7pt}.visum-field{flex:1}.visum-field i{display:block;width:80%;height:18px;border-bottom:1px solid #555}.page-number{white-space:nowrap}
